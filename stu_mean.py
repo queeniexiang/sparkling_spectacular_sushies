@@ -5,6 +5,15 @@
 
 import sqlite3   #enable control of an sqlite database
 
+'''The code below uses a general 3-step method: construct, modify, display.
+   1. The 'construct' step creates the keys within a dictionary and adds all
+   respective data for each key (the key being the ID and the values being
+   the name and the marks for the student). 
+   2. The 'modify' step removes all marks for every student and replaces them 
+   with a single value equal to the average of all of the student's marks. 
+   3. The 'display' step shows the user the IDs, names, and averages of each 
+   student.'''
+
 f = "discobandit.db"
 
 db = sqlite3.connect(f) #open if f exists, otherwise create
@@ -12,7 +21,7 @@ c = db.cursor()    #facilitate db ops
 
 d = {} #dictionary for storing student data
 
-#obtain all marks matched with each ID
+#obtain all marks matched with each ID ('construct' step)
 values = c.execute("SELECT peeps.id,name,mark FROM peeps,courses WHERE peeps.id = courses.id")
 for row in values:
     ID = row[0]
@@ -30,7 +39,7 @@ for row in values:
 
 #print "\n"
 
-#compute averages for each ID and replace marks with said average
+#compute averages for each ID and replace marks with said average ('modify' step)
 for ID in d:
     marks = d[ID][1:len(d[ID])] #list of all marks for each ID
     avg = sum(marks) / float(len(marks)) #average of marks for each ID
@@ -42,7 +51,7 @@ for ID in d:
 
     #print ID,":",d[ID]
 
-#display IDs, names, and averages
+#display IDs, names, and averages ('display' step)
 print "--------------------------------------"
 for ID in sorted(d.iterkeys()):
     name = d[ID][0]
