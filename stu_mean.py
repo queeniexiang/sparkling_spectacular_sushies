@@ -1,4 +1,4 @@
-#spectacular_sparkling_sushies {Queenie Xiang and Michael Ruvinshteyn}
+#sparkling_spectacular_sushies {Queenie Xiang and Michael Ruvinshteyn}
 #SoftDev1 pd 7
 #HW10 -- Average
 #2017 - 10 - 16
