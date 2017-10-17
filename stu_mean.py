@@ -5,15 +5,7 @@
 
 import sqlite3   #enable control of an sqlite database
 
-'''The code below uses a general 3-step method: construct, modify, display.
-   1. The 'construct' step creates the keys within a dictionary and adds all
-   respective data for each key (the key being the ID and the values being
-   the name and the marks for the student). 
-   2. The 'modify' step removes all marks for every student and replaces them 
-   with a single value equal to the average of all of the student's marks. 
-   3. The 'display' step shows the user the IDs, names, and averages of each 
-   student.'''
-
+#connect to the database
 try:
     f = "discobandit.db"
 
@@ -23,10 +15,19 @@ try:
     d = {} #dictionary for storing student data
 
 except:
-    print "E R R O R -- check if:"
-    print "(1)the database of the appropriate name is in the same directory"
+    print "E R R O R -- check if the database of the appropriate name is in the same directory"
+
     
     
+'''The following three functions use a general 3-step method: construct, modify, display.
+   1. The 'construct' step creates the keys within a dictionary and adds all
+   respective data for each key (the key being the ID and the values being
+   the name and the marks for the student). 
+   2. The 'modify' step removes all marks for every student and replaces them 
+   with a single value equal to the average of all of the student's marks. 
+   3. The 'display' step shows the user the IDs, names, and averages of each 
+   student.'''
+ 
 #obtain all marks matched with each ID ('construct' step)
 def match(): 
     try:
@@ -51,7 +52,7 @@ def match():
 
 
          
-#Computes the average of each student
+#computes the average of each student ('modify' step)
 def compute_average(): 
     #compute averages for each ID and replace marks with said average ('modify' step)
     for ID in d:
@@ -80,26 +81,26 @@ def print_dict():
 
 
 
-#Create a table of IDs and associated averages
+#create a table of IDs and associated averages
 def insert():
     try: 
-        #To avoid adding duplicate values 
+        #to avoid adding duplicate values, remove any preexisting peeps_avg table
         c.execute("DROP TABLE IF EXISTS peeps_avg")
 
-        #Create a new table with columns id and avg 
+        #create a new table with columns id and avg 
         c.execute("CREATE TABLE peeps_avg (id INTEGER, avg REAL)")
 
-        #Add values to the table in their appropriate columns from the dictionary
+        #add values to the table in their appropriate columns from the dictionary
         for ID in d:
             avg = d[ID][1]
-            c.execute("INSERT INTO peeps_avg VALUES(" + str(ID) + "," + str(avg) + ")")
+            c.execute("INSERT INTO peeps_avg VALUES(?,?)",(ID,avg))
             #print ID,avg
     except:
         print "E R R O R -- check if the table was created and called properly"
         
 
 
-#Add in a new row into the courses table 
+#add in a new row into the courses table 
 def add_courses(new_ID, new_code, new_mark,):
     try:
         c.execute("INSERT INTO courses VALUES(?, ?, ?)", (new_code, new_mark, new_ID))
@@ -109,58 +110,64 @@ def add_courses(new_ID, new_code, new_mark,):
 
 
 
-#Add in a new grade for a student
+#add in a new grade for a student
 def add_mark():
-    end = False
-    d_courses = {}
-    d_courses_temp = c.execute("SELECT * FROM courses")
+    end = False #boolean variable that determines whether the user can add more grades
+    success = False #boolean variable that determines whether the given ID is valid
     
-    for row in d_courses_temp:
-        ID = int(row[2])
-        print ID
-        code = str(row[0])
-        print code
-        mark = long(row[1])
-        print mark
+    while not end:
+        #collect valid ID
+        while not success:
+            try:
+                input_id = int(raw_input("Which student are you looking for? Enter the ID: "))
+                while input_id not in d:
+                    input_id = int(raw_input("That ID is not in our database, please try again: "))
+                success = True;
+            except:
+                print "Please enter a valid integral value"
+        success = False #reset to False in case user wants to enter another grade
         
-        d_courses[ID] = [code,mark]
-    
+        input_code = str(raw_input("Which course are you looking for? Enter the code: ")).lower() 
+        input_mark = long(raw_input("What grade are you entering? Enter the grade: "))
+        terminate = str(raw_input("Are you done? Type y for yes, n for no: ")).lower()
 
-    #for person in d_courses:
-        #print d_courses[person]
-    
-    while (not end):
-        try: 
-            input_id = int(raw_input("Which student are you looking for? Enter the ID: "))
-            input_code = str(raw_input("Which course are you looking for? Enter the code: ")).lower() 
-            input_mark = long(raw_input("What grade are you entering? Enter the grade: "))
-            terminate = str(raw_input("Are you done? Type y for yes, n for no: ")).lower() 
+        #add course to courses table if the course was not previously there
+        if(input_code not in d[input_id]):
+            add_courses(input_id, input_code, input_mark)
 
-            if(input_id not in d_courses or input_code not in d_courses[input_id]):
-                add_courses(input_id, input_code, input_mark)
-
-            if(input_code in d_courses[input_id]):
-                d_courses[input_id][0] = input_mark
-                c.execute("UPDATE courses SET mark = ? where id = ? AND code = ?", (input_mark, input_id, input_code))
+        #update grade for course,ID if course already exists
+        if(input_code in d[input_id]):
+            d[input_id][0] = input_mark
+            c.execute("UPDATE courses SET mark = ? WHERE id = ? AND code = ?", (input_mark, input_id, input_code))
         
-                
-            if terminate == "y":
-                end = True
-                break
+        while terminate != "y" and terminate != "n":
+            terminate = raw_input("Please enter a valid input (y or n): ")
             
-        except:
-            print "E R R O R -- Incorrect format in input(s). Please try again."
-            break
-    
-    
-        
-        
+        if terminate == "y":
+            end = True
+                
 
-        
-        
+#print peeps_avg table
+def print_avg():
+    values = c.execute("SELECT * FROM peeps_avg")
+    for row in values:
+        ID = row[0]
+        avg = row[1]
+        print ID," | ",avg
 
 #=======================TESTING AREA==========================
 #add_courses("Chorus", 100, 10)
+#add_mark()
+
+match()
+compute_average()
+print_dict()
+
+print "\n\n"
+
+insert()
+print_avg()
+
 add_mark()
 
 db.commit()
