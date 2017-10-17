@@ -80,6 +80,11 @@ def print_dict():
         print "--------------------------------------"
 
 
+'''The following four functions allow the user to insert a grade for an ID and course of their choice.
+   insert() creates a new table for accessing the averages for their respective IDs much more easily.
+   add_courses() adds the provided code and mark for the given ID (all are parameters)
+   add_mark() allows the user to choose what mark gets inserted for which code and ID (utilizes add_course())
+   print_avg() prints the peeps_avg table created by insert() and modified by add_mark()'''
 
 #create a table of IDs and associated averages
 def insert():
