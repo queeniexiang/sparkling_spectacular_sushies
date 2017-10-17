@@ -52,6 +52,14 @@ try:
 
         #print ID,":",d[ID]
 
+    c.execute("DROP TABLE IF EXISTS peeps_avg")
+    c.execute("CREATE TABLE peeps_avg (id INTEGER, avg REAL)")
+    for ID in d:
+        avg = d[ID][1]
+        c.execute("INSERT INTO peeps_avg VALUES(" + str(ID) + "," + str(avg) + ")")
+        print ID,avg
+
+
     
     #display IDs, names, and averages ('display' step)
     print "--------------------------------------"
@@ -62,13 +70,14 @@ try:
         print "Name:",name
         print "Average:",avg
         print "--------------------------------------"
+
+    db.commit()
+    db.close()
 except:
     print "E R R O R -- check if:"
     print "(1)the database of the appropriate name is in the same directory"
     print "(2)the database contains the proper tables (peeps and courses) with the proper fields"
 
-c.execute("CREATE TABLE IF NOT EXISTS peeps_avg (id INTEGER, avg REAL)")
-for ID in d:
-    avg = d[ID][1]
-    c.execute("INSERT INTO peeps_avg VALUES(" + str(ID) + "," + str(avg) + ")")
-    print ID,avg
+
+
+
