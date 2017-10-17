@@ -129,28 +129,28 @@ def add_mark():
     #for person in d_courses:
         #print d_courses[person]
     
-    #while (not end):
-    #try: 
-    input_id = int(raw_input("Which student are you looking for? Enter the ID: "))
-    input_code = str(raw_input("Which course are you looking for? Enter the code: ")).lower() 
-    input_mark = long(raw_input("What grade are you entering? Enter the grade: "))
-    terminate = str(raw_input("Are you done? Type y for yes, n for no: ")).lower() 
+    while (not end):
+        try: 
+            input_id = int(raw_input("Which student are you looking for? Enter the ID: "))
+            input_code = str(raw_input("Which course are you looking for? Enter the code: ")).lower() 
+            input_mark = long(raw_input("What grade are you entering? Enter the grade: "))
+            terminate = str(raw_input("Are you done? Type y for yes, n for no: ")).lower() 
 
-    if(input_id not in d_courses or input_code not in d_courses[input_id]):
-        add_courses(input_id, input_code, input_mark)
+            if(input_id not in d_courses or input_code not in d_courses[input_id]):
+                add_courses(input_id, input_code, input_mark)
 
-    if(input_code in d_courses[input_id]):
-        d_courses[input_id][0] = input_mark
-        c.execute("UPDATE courses SET mark = ? where id = ? AND code = ?", (input_mark, input_id, input_code))
+            if(input_code in d_courses[input_id]):
+                d_courses[input_id][0] = input_mark
+                c.execute("UPDATE courses SET mark = ? where id = ? AND code = ?", (input_mark, input_id, input_code))
         
                 
-    if terminate == "y":
-        end = True
-        #break
+            if terminate == "y":
+                end = True
+                break
             
-    #except:
-    #print "E R R O R -- Incorrect format in input(s). Please try again."
-    #break
+        except:
+            print "E R R O R -- Incorrect format in input(s). Please try again."
+            break
     
     
         
