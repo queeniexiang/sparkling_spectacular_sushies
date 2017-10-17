@@ -37,7 +37,7 @@ try:
             d[ID].append(mark)
 
         #print ID,":",d[ID]
-
+    
     #print "\n"
 
     #compute averages for each ID and replace marks with said average ('modify' step)
@@ -52,6 +52,7 @@ try:
 
         #print ID,":",d[ID]
 
+    
     #display IDs, names, and averages ('display' step)
     print "--------------------------------------"
     for ID in sorted(d.iterkeys()):
@@ -65,3 +66,9 @@ except:
     print "E R R O R -- check if:"
     print "(1)the database of the appropriate name is in the same directory"
     print "(2)the database contains the proper tables (peeps and courses) with the proper fields"
+
+c.execute("CREATE TABLE IF NOT EXISTS peeps_avg (id INTEGER, avg REAL)")
+for ID in d:
+    avg = d[ID][1]
+    c.execute("INSERT INTO peeps_avg VALUES(" + str(ID) + "," + str(avg) + ")")
+    print ID,avg
