@@ -27,9 +27,8 @@ except:
     print "(1)the database of the appropriate name is in the same directory"
     
     
-
+#obtain all marks matched with each ID ('construct' step)
 def match(): 
-    #obtain all marks matched with each ID ('construct' step)
     try:
         values = c.execute("SELECT peeps.id,name,mark FROM peeps,courses WHERE peeps.id = courses.id")
         for row in values:
@@ -49,10 +48,10 @@ def match():
 
     except:
          print "E R R O R -- check if the database contains the proper tables (peeps and courses) with the proper fields"
-        
 
 
-
+         
+#Computes the average of each student
 def compute_average(): 
     #compute averages for each ID and replace marks with said average ('modify' step)
     for ID in d:
@@ -65,10 +64,24 @@ def compute_average():
         d[ID].append(avg) #insert average to the value
 
         #print ID,":",d[ID]
+        
 
         
-def insert():
+#display IDs, names, and averages ('display' step)
+def print_dict(): 
+    print "--------------------------------------"
+    for ID in sorted(d.iterkeys()):
+        name = d[ID][0]
+        avg = d[ID][1]
+        print "ID:", ID
+        print "Name:",name
+        print "Average:",avg
+        print "--------------------------------------"
 
+
+
+#Create a table of IDs and associated averages
+def insert():
     try: 
         #To avoid adding duplicate values 
         c.execute("DROP TABLE IF EXISTS peeps_avg")
@@ -84,22 +97,71 @@ def insert():
     except:
         print "E R R O R -- check if the table was created and called properly"
         
+
+
+#Add in a new row into the courses table 
+def add_courses(new_ID, new_code, new_mark,):
+    try:
+        c.execute("INSERT INTO courses VALUES(?, ?, ?)", (new_code, new_mark, new_ID))
+
+    except:
+        print "E R R O R -- Check to see if inputs are valid"
+
+
+
+#Add in a new grade for a student
+def add_mark():
+    end = False
+    d_courses = {}
+    d_courses_temp = c.execute("SELECT * FROM courses")
+    
+    for row in d_courses_temp:
+        ID = int(row[2])
+        print ID
+        code = str(row[0])
+        print code
+        mark = long(row[1])
+        print mark
+        
+        d_courses[ID] = [code,mark]
+    
+
+    #for person in d_courses:
+        #print d_courses[person]
+    
+    #while (not end):
+    #try: 
+    input_id = int(raw_input("Which student are you looking for? Enter the ID: "))
+    input_code = str(raw_input("Which course are you looking for? Enter the code: ")).lower() 
+    input_mark = long(raw_input("What grade are you entering? Enter the grade: "))
+    terminate = str(raw_input("Are you done? Type y for yes, n for no: ")).lower() 
+
+    if(input_id not in d_courses or input_code not in d_courses[input_id]):
+        add_courses(input_id, input_code, input_mark)
+
+    if(input_code in d_courses[input_id]):
+        d_courses[input_id][0] = input_mark
+        c.execute("UPDATE courses SET mark = ? where id = ? AND code = ?", (input_mark, input_id, input_code))
+        
+                
+    if terminate == "y":
+        end = True
+        #break
+            
+    #except:
+    #print "E R R O R -- Incorrect format in input(s). Please try again."
+    #break
+    
+    
+        
         
 
+        
+        
 
-def print_dict(): 
-    #display IDs, names, and averages ('display' step)
-    print "--------------------------------------"
-    for ID in sorted(d.iterkeys()):
-        name = d[ID][0]
-        avg = d[ID][1]
-        print "ID:", ID
-        print "Name:",name
-        print "Average:",avg
-        print "--------------------------------------"
-
-
-
+#=======================TESTING AREA==========================
+#add_courses("Chorus", 100, 10)
+add_mark()
 
 db.commit()
 db.close()
