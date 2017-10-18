@@ -120,6 +120,7 @@ def add_mark():
     success = False #boolean variable that determines whether the given ID is valid
     
     while True:
+        #end function if user does not wish to add a grade
         terminate = str(raw_input("Would you like to add a grade? Type y for yes, n for no: ")).lower()
 
         while terminate != "y" and terminate != "n":
@@ -139,8 +140,8 @@ def add_mark():
                 print "Please enter a valid integral value"
         success = False #reset to False in case user wants to enter another grade
         
-        input_code = str(raw_input("Which course are you looking for? Enter the code: ")).lower() 
-        input_mark = long(raw_input("What grade are you entering? Enter the grade: "))
+        input_code = str(raw_input("Which course are you looking for? Enter the code: ")).lower() #course to add grade for
+        input_mark = long(raw_input("What grade are you entering? Enter the grade: ")) #grade for the given course ^
         
 
         #add course to courses table if the course was not previously there
