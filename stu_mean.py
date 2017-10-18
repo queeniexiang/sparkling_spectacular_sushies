@@ -117,10 +117,17 @@ def add_courses(new_ID, new_code, new_mark,):
 
 #add in a new grade for a student
 def add_mark():
-    end = False #boolean variable that determines whether the user can add more grades
     success = False #boolean variable that determines whether the given ID is valid
     
-    while not end:
+    while True:
+        terminate = str(raw_input("Would you like to add a grade? Type y for yes, n for no: ")).lower()
+
+        while terminate != "y" and terminate != "n":
+            terminate = raw_input("Please enter a valid input (y or n): ")
+            
+        if terminate == "n":
+            break
+            
         #collect valid ID
         while not success:
             try:
@@ -134,7 +141,7 @@ def add_mark():
         
         input_code = str(raw_input("Which course are you looking for? Enter the code: ")).lower() 
         input_mark = long(raw_input("What grade are you entering? Enter the grade: "))
-        terminate = str(raw_input("Are you done? Type y for yes, n for no: ")).lower()
+        
 
         #add course to courses table if the course was not previously there
         if(input_code not in d[input_id]):
@@ -144,12 +151,6 @@ def add_mark():
         if(input_code in d[input_id]):
             d[input_id][0] = input_mark
             c.execute("UPDATE courses SET mark = ? WHERE id = ? AND code = ?", (input_mark, input_id, input_code))
-        
-        while terminate != "y" and terminate != "n":
-            terminate = raw_input("Please enter a valid input (y or n): ")
-            
-        if terminate == "y":
-            end = True
                 
 
 #print peeps_avg table
